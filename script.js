@@ -45,7 +45,9 @@ function getMultipleChoices(n, correctAnswer, possibleChoices) {
 function getBreedFromURL(url) {
     // The string method .split(char) may come in handy
     // Try to use destructuring as much as you can
-
+    let urlSplit = url.split("/")[4];
+    let [breed, subbreed] = urlSplit.split("-");
+    return [subbreed, breed].join(" ").trim()
 }
 
 
@@ -55,7 +57,10 @@ function getBreedFromURL(url) {
 // then parse the response as a JSON object,
 // finally return the "message" property of its body
 async function fetchMessage(url) {
-
+    const response = await fetch(url);
+    const body = await response.json()
+    const {message} = body
+    return message;
 }
 
 
@@ -80,6 +85,14 @@ function renderButtons(choicesArray, correctAnswer) {
     // Create a button element whose name, value, and textContent properties are the value of that choice,
     // attach a "click" event listener with the buttonHandler function,
     // and append the button as a child of the options element
+    for(let choice of choicesArray){
+        const button = document.createElement("button");
+        button.textContent = choice;
+        button.value = choice;
+        button.name = choice;
+        button.addEventListener("click", buttonHandler);
+        options.appendChild(button);
+    }
 
 }
 
@@ -112,3 +125,6 @@ async function loadQuizData() {
 // TODO 5
 // Asynchronously call the loadQuizData() function,
 // Then call renderQuiz() with the returned imageUrl, correctAnswer, and choices
+// Function to initiate the quiz
+const [imgUrl, correctBreed, breedChoices] = await loadQuizData();
+renderQuiz(imgUrl, correctBreed, breedChoices);
